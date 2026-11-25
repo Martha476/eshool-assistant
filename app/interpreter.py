@@ -1,6 +1,6 @@
 """AI layer: turns free text into SearchCriteria. Nothing else lives here.
 
-The model is forced to answer through a tool whose input schema is
+The model is required to answer with a strict JSON schema matching
 SearchCriteria, and the result is validated again with Pydantic. The AI
 never sees search results and never writes explanations about schools.
 
@@ -53,17 +53,17 @@ _criteria_schema = SearchCriteria.model_json_schema()
 _criteria_schema["additionalProperties"] = False
 _criteria_schema["required"] = list(_criteria_schema["properties"])
 
-TOOL = {
-    "type": "function",
-    "function": {
-        "name": "set_search_criteria",
-        "description": "Record the structured school search criteria extracted from the parent's request.",
-        "parameters": _criteria_schema,
+RESPONSE_FORMAT = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "search_criteria",
         "strict": True,
+        "schema": _criteria_schema,
     },
 }
 
-DEFAULT_MODEL = "gpt-4o-mini"
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+DEFAULT_MODEL = "openai/gpt-oss-120b"
 
 
 class InterpretationError(Exception):
@@ -96,14 +96,14 @@ def interpret(
     context_fn: Optional[Callable[[str], str]] = None,
 ) -> SearchCriteria:
     if client is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise InterpretationError(
-                "OpenAI API key is missing. Set OPENAI_API_KEY in the project-root .env file."
+                "Groq API key is missing. Set GROQ_API_KEY in the project-root .env file."
             )
         from openai import OpenAI
 
-        client = OpenAI(api_key=api_key)
+        client = OpenAI(api_key=api_key, base_url=GROQ_BASE_URL)
 
     try:
         context = (context_fn or default_context)(request)
@@ -113,37 +113,24 @@ def interpret(
 
     try:
         response = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", DEFAULT_MODEL),
+            model=os.getenv("GROQ_MODEL", DEFAULT_MODEL),
             max_tokens=800,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": build_user_message(request, context)},
             ],
-            tools=[TOOL],
-            tool_choice={
-                "type": "function",
-                "function": {"name": TOOL["function"]["name"]},
-            },
+            response_format=RESPONSE_FORMAT,
         )
     except Exception as exc:  # network, auth, rate limit, bad model name...
         raise InterpretationError(f"AI service failed: {exc}") from exc
 
     if not response.choices:
         raise InterpretationError("AI returned no structured output")
-    message = response.choices[0].message
-    tool_call = next(
-        (
-            call
-            for call in (message.tool_calls or [])
-            if call.type == "function"
-            and call.function.name == TOOL["function"]["name"]
-        ),
-        None,
-    )
-    if tool_call is None:
+    content = response.choices[0].message.content
+    if not content:
         raise InterpretationError("AI returned no structured output")
 
     try:
-        return SearchCriteria.model_validate(json.loads(tool_call.function.arguments))
+        return SearchCriteria.model_validate(json.loads(content))
     except (json.JSONDecodeError, ValidationError) as exc:
         raise InterpretationError(f"AI output failed validation: {exc}") from exc

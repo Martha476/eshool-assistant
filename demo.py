@@ -1,6 +1,6 @@
 """Generate DEMO.md with the three required example requests.
 
-Live mode (needs OPENAI_API_KEY, hits the real eSchool site):
+Live mode (needs GROQ_API_KEY, hits the real eSchool site):
     python demo.py
 
 Offline mode (no key, no network). The AI step is replaced by hard-coded

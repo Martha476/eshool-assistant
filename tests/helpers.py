@@ -11,7 +11,7 @@ def read_fixture(name: str) -> str:
 
 
 class FakeClient:
-    """Mimics the OpenAI chat-completions API and records every call."""
+    """Mimics the Groq-compatible chat-completions API and records every call."""
 
     def __init__(self, content=None, error=None):
         self._content, self._error = content, error
@@ -25,7 +25,7 @@ class FakeClient:
         if self._error:
             raise self._error
         return SimpleNamespace(
-            choices=[SimpleNamespace(message=SimpleNamespace(tool_calls=self._content))]
+            choices=[SimpleNamespace(message=SimpleNamespace(content=self._content))]
         )
 
     @property
@@ -33,15 +33,5 @@ class FakeClient:
         return self.calls[-1]["messages"][-1]["content"]
 
 
-def tool_block(payload: dict):
-    return SimpleNamespace(
-        type="function",
-        function=SimpleNamespace(
-            name="set_search_criteria",
-            arguments=json.dumps(payload),
-        ),
-    )
-
-
 def client_returning(payload: dict) -> FakeClient:
-    return FakeClient([tool_block(payload)])
+    return FakeClient(json.dumps(payload))

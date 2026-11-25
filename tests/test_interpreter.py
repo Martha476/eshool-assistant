@@ -1,22 +1,20 @@
-from types import SimpleNamespace
-
 import pytest
 
 from app.interpreter import (
+    RESPONSE_FORMAT,
     SYSTEM_PROMPT,
-    TOOL,
     InterpretationError,
     build_user_message,
     interpret,
 )
-from tests.helpers import FakeClient, client_returning, tool_block
+from tests.helpers import FakeClient, client_returning
 
 
 def no_context(_):
     return ""
 
 
-def test_valid_tool_output_becomes_criteria():
+def test_valid_structured_output_becomes_criteria():
     client = client_returning({"location": "Kampala", "gender": "girls", "max_fees": 1000000})
     c = interpret("girls school in Kampala under 1m", client=client, context_fn=no_context)
     assert c.location == "Kampala" and c.gender == "girls" and c.max_fees == 1_000_000
@@ -27,25 +25,21 @@ def test_unstated_fields_stay_none():
     assert c.specified() == {"location": "Gulu"}
 
 
-def test_forces_tool_use():
+def test_requests_strict_json_schema():
     client = client_returning({})
     interpret("anything", client=client, context_fn=no_context)
-    assert client.calls[0]["tool_choice"] == {
-        "type": "function",
-        "function": {"name": TOOL["function"]["name"]},
-    }
-    assert client.calls[0]["tools"] == [TOOL]
+    assert client.calls[0]["response_format"] == RESPONSE_FORMAT
 
 
 def test_model_comes_from_environment(monkeypatch):
-    monkeypatch.setenv("OPENAI_MODEL", "some-other-model")
+    monkeypatch.setenv("GROQ_MODEL", "some-other-model")
     client = client_returning({})
     interpret("x", client=client, context_fn=no_context)
     assert client.calls[0]["model"] == "some-other-model"
 
 
-def test_no_tool_block_raises():
-    client = FakeClient([SimpleNamespace(type="text", text="hello")])
+def test_missing_structured_content_raises():
+    client = FakeClient()
     with pytest.raises(InterpretationError, match="no structured output"):
         interpret("x", client=client, context_fn=no_context)
 
@@ -67,10 +61,28 @@ def test_api_failure_raises_with_reason():
         interpret("x", client=client, context_fn=no_context)
 
 
-def test_missing_openai_key_has_actionable_error(monkeypatch):
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with pytest.raises(InterpretationError, match="OPENAI_API_KEY"):
+def test_missing_groq_key_has_actionable_error(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    with pytest.raises(InterpretationError, match="GROQ_API_KEY"):
         interpret("x", context_fn=no_context)
+
+
+def test_groq_client_uses_the_configured_server_key(monkeypatch):
+    captured = {}
+    fake_client = client_returning({})
+
+    def fake_openai(*, api_key, base_url):
+        captured["api_key"] = api_key
+        captured["base_url"] = base_url
+        return fake_client
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq-key")
+    monkeypatch.setattr("openai.OpenAI", fake_openai)
+    interpret("x", context_fn=no_context)
+    assert captured == {
+        "api_key": "test-groq-key",
+        "base_url": "https://api.groq.com/openai/v1",
+    }
 
 
 # --- reference notes (RAG) in the prompt -------------------------------------------------

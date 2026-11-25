@@ -7,8 +7,8 @@ and explains which listing details support each requested preference.
 ## Requirements
 
 - Python 3.10 or newer
-- An OpenAI API key for live natural-language interpretation
-- Network access to the OpenAI API and `eschool.ug` for live searches
+- A Groq API key for live natural-language interpretation
+- Network access to the Groq API and `eschool.ug` for live searches
 
 The offline demo and automated tests require no API key or network access.
 
@@ -18,8 +18,8 @@ The offline demo and automated tests require no API key or network access.
 - **FastAPI** provides the web UI routes and JSON API; **Uvicorn** runs the ASGI
   application.
 - **Pydantic** validates search criteria and API responses.
-- **OpenAI Python SDK** interprets requests using the `gpt-4o-mini` model by
-  default and structured function calls.
+- **OpenAI-compatible Python SDK** sends requests to Groq, using the
+  `openai/gpt-oss-120b` model by default and strict JSON-schema responses.
 - **HTTPX** and **Beautiful Soup** request and parse eSchool's public search page.
 - The browser UI uses **HTML, CSS, and vanilla JavaScript**; it does not use a
   separate frontend framework.
@@ -38,8 +38,8 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Set `OPENAI_API_KEY` in the project-root `.env`. The file is ignored by git; do
-not commit keys. `OPENAI_MODEL` is optional and defaults to `gpt-4o-mini`.
+Set `GROQ_API_KEY` in the project-root `.env`. The file is ignored by git; do
+not commit keys. `GROQ_MODEL` is optional and defaults to `openai/gpt-oss-120b`.
 
 ## Run
 
@@ -50,8 +50,10 @@ python -m uvicorn app.main:app --reload
 ```
 
 Open `http://127.0.0.1:8000`. The page submits the parent's request as JSON to the
-same-origin `POST /search` endpoint and renders its structured response. Since the
-browser and API share an origin, no CORS configuration is needed.
+same-origin `POST /search` endpoint and renders its structured response. The
+backend calls Groq using `GROQ_API_KEY`; the key stays on the server and is never
+sent to browser JavaScript. Since the browser and API share an origin, no CORS
+configuration is needed.
 
 ### CLI
 
@@ -84,7 +86,7 @@ python demo.py --offline
 
 This writes `DEMO.md` using clearly synthetic HTML fixtures and fixed example
 interpretations; it demonstrates the pipeline, not live eSchool data or AI accuracy.
-Omit `--offline` to interpret the sample prompts with OpenAI and search the live site.
+Omit `--offline` to interpret the sample prompts with Groq and search the live site.
 
 ## Tests
 
