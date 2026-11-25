@@ -12,6 +12,20 @@ and explains which listing details support each requested preference.
 
 The offline demo and automated tests require no API key or network access.
 
+## Frameworks and technologies
+
+- **Python 3.10+** for the application and command-line interface.
+- **FastAPI** provides the web UI routes and JSON API; **Uvicorn** runs the ASGI
+  application.
+- **Pydantic** validates search criteria and API responses.
+- **OpenAI Python SDK** interprets requests using the `gpt-4o-mini` model by
+  default and structured function calls.
+- **HTTPX** and **Beautiful Soup** request and parse eSchool's public search page.
+- The browser UI uses **HTML, CSS, and vanilla JavaScript**; it does not use a
+  separate frontend framework.
+- **python-dotenv** loads local configuration, and **pytest** with **respx**
+  supports automated tests.
+
 ## Install
 
 From the project directory, create and activate a virtual environment, then install
@@ -32,7 +46,7 @@ not commit keys. `OPENAI_MODEL` is optional and defaults to `gpt-4o-mini`.
 ### Web UI
 
 ```powershell
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Open `http://127.0.0.1:8000`. The page submits the parent's request as JSON to the
@@ -50,7 +64,7 @@ Or run interactively with `python -m app.cli`.
 ### HTTP API
 
 ```powershell
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 Send a JSON request to `POST http://127.0.0.1:8000/search`:
