@@ -1,0 +1,44 @@
+[
+  {
+    "id": "school-levels",
+    "title": "School levels in Uganda",
+    "keywords": ["nursery", "kindergarten", "primary", "secondary", "o-level", "a-level", "ple", "uce", "uace", "level", "high school"],
+    "text": "Nursery (pre-primary) comes first. Primary school runs Primary One to Primary Seven (P1-P7) and ends with the Primary Leaving Examination (PLE). Secondary school has lower secondary, Senior One to Senior Four (S1-S4, O-level, ending with UCE), and upper secondary, Senior Five and Senior Six (S5-S6, A-level, ending with UACE)."
+  },
+  {
+    "id": "class-names",
+    "title": "Class names and abbreviations",
+    "keywords": ["senior one", "senior two", "senior three", "senior four", "senior five", "senior six", "s1", "s2", "s3", "s4", "s5", "s6", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "primary one", "primary seven", "admission class", "joining"],
+    "text": "Senior One is also written S1 or S.1 and is the first year of secondary school. Likewise S2-S6 are Senior Two to Senior Six. Primary One is P1 and Primary Seven is P7. A parent asking about admission into one of these classes means the admission_class field, and Senior classes imply secondary level while Primary classes imply primary level."
+  },
+  {
+    "id": "boarding-day",
+    "title": "Boarding and day schools",
+    "keywords": ["boarding", "day", "day school", "boarding school", "semi-boarding", "residential"],
+    "text": "A boarding school has pupils living at the school during term. A day school has pupils going home each day. Many schools offer both. 'Boarding' maps to boarding, 'day' maps to day, and 'both' only when the parent wants a school offering both options."
+  },
+  {
+    "id": "gender-categories",
+    "title": "School gender categories",
+    "keywords": ["girls", "boys", "mixed", "co-ed", "coed", "co-educational", "coeducational", "single-sex", "gender"],
+    "text": "Schools are boys-only, girls-only or mixed (co-educational, also written co-ed). 'Girls' school' maps to girls, 'boys' school' maps to boys, and 'mixed' or 'co-ed' maps to mixed."
+  },
+  {
+    "id": "kampala-divisions",
+    "title": "Kampala divisions and nearby districts",
+    "keywords": ["kampala", "central", "kawempe", "makindye", "nakawa", "rubaga", "division", "wakiso", "mukono", "entebbe", "area", "county"],
+    "text": "Kampala Capital City has five divisions: Central, Kawempe, Makindye, Nakawa and Rubaga. Wakiso and Mukono are separate districts bordering Kampala, not divisions of it. In the eSchool search URL the location is the city (for example KAMPALA) and the county field holds the division (for example KAMPALA CENTRAL DIVISION)."
+  },
+  {
+    "id": "fees-and-terms",
+    "title": "Fees, terms and currency shorthand",
+    "keywords": ["fees", "fee", "term", "budget", "ugx", "shillings", "million", "cheap", "affordable", "expensive", "per term", "per year", "annual", "100k", "1m", "800k"],
+    "text": "The Ugandan school year has three terms and fees are normally quoted per term in Ugandan shillings (UGX). 'k' means thousand and 'm' or 'million' means one million, so 800k is 800,000 and 1m is 1,000,000. 'No more than', 'under' or 'up to' sets a maximum; 'at least' or 'from' sets a minimum. Words like 'cheap' or 'affordable' give no number and must not be turned into one. Annual amounts should be divided by three only if the parent clearly states a yearly figure."
+  },
+  {
+    "id": "admission-status",
+    "title": "Admission status wording",
+    "keywords": ["admitting", "admission", "admissions", "open", "closed", "vacancy", "vacancies", "places", "applications", "enrolling", "currently"],
+    "text": "'Currently admitting', 'has vacancies', 'accepting applications' or 'admissions open' all mean the parent wants schools whose admissions are open right now (admitting_now true). This is a status, not a class: the class they want is admission_class."
+  }
+]

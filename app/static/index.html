@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102747">
+    <meta name="description" content="Describe the school you want and search eSchool in plain language.">
+    <title>eSchool Search Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="eSchool Search Assistant home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <path d="M3 11.2 16 4l13 7.2-13 7.2L3 11.2Z"></path>
+            <path d="M8 14.2v7.1c4.8 4 11.2 4 16 0v-7.1M29 11v9"></path>
+          </svg>
+        </span>
+        <span class="brand-copy"><strong>eSchool</strong><small>SEARCH ASSISTANT</small></span>
+      </a>
+      <a class="header-link" href="https://eschool.ug/find-schools/search" target="_blank" rel="noopener noreferrer">
+        Live search <span>eschool.ug</span><span class="external-mark" aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="eyebrow"><span class="live-dot"></span> AI-POWERED SCHOOL SEARCH</div>
+          <h1>Describe the school<br class="desktop-break"> you want, in your own words</h1>
+          <p class="hero-intro">No filters to figure out. Tell us the location, fees, class and type of school, and we search eSchool for you.</p>
+
+          <form id="search-form" class="search-form">
+            <label for="request-input">Your request</label>
+            <textarea id="request-input" name="request" maxlength="1000" required
+              placeholder="For example: Girls' boarding school in Kampala, under UGX 1 million per term, admitting Senior One."
+              aria-describedby="request-help character-count"></textarea>
+            <div class="input-footer">
+              <span id="request-help" class="input-hint">Be as specific as you like. We’ll show what each listing confirms.</span>
+              <span id="character-count" class="character-count">0 / 1000</span>
+            </div>
+            <div class="suggestions" aria-label="Example requests">
+              <span>Try:</span>
+              <button type="button" class="suggestion" data-request="Mixed day school in Nakawa">Mixed day school in Nakawa</button>
+              <button type="button" class="suggestion" data-request="Boys' school under UGX 800k per term">Boys' school under UGX 800k per term</button>
+              <button type="button" class="suggestion" data-request="Primary school with Primary One places">Primary school with Primary One places</button>
+            </div>
+            <div class="form-actions">
+              <span class="privacy-note"><span aria-hidden="true">✦</span> Results come directly from eSchool</span>
+              <button id="submit-button" class="primary-button" type="submit">
+                <span class="button-label">Find schools</span>
+                <span class="button-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="feedback" class="feedback page-width" aria-live="polite" hidden></section>
+
+      <section id="results-section" class="results-section page-width" hidden>
+        <div class="results-heading">
+          <div>
+            <p class="section-kicker">YOUR SEARCH</p>
+            <h2 id="results-title">Schools found</h2>
+            <p id="results-subtitle" class="muted-copy"></p>
+          </div>
+          <a id="exact-search-link" class="outline-link" href="https://eschool.ug/find-schools/search" target="_blank" rel="noopener noreferrer" hidden>
+            View this exact search on eSchool <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+
+        <div class="results-layout">
+          <aside class="criteria-column">
+            <section class="criteria-card">
+              <div class="card-heading">
+                <span class="heading-icon" aria-hidden="true">⌕</span>
+                <h3>How I understood you</h3>
+              </div>
+              <p class="criteria-label">YOU SPECIFIED</p>
+              <dl id="specified-criteria" class="criteria-list"></dl>
+              <div id="unspecified-block" class="unspecified-block" hidden>
+                <p class="criteria-label">NOT SPECIFIED</p>
+                <div id="unspecified-criteria" class="chip-list"></div>
+              </div>
+            </section>
+            <div id="filter-note" class="notice notice-info" hidden>
+              <span class="notice-icon" aria-hidden="true">i</span>
+              <div><strong>Not filterable on eSchool</strong><p id="filter-note-text"></p></div>
+            </div>
+          </aside>
+
+          <div class="school-column">
+            <div id="result-list" class="result-list"></div>
+            <div class="results-footnote">Results come live from eSchool. Anything the listing doesn’t confirm is marked, never guessed.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>eSchool Search Assistant</span>
+      <span>Live school information provided by <a href="https://eschool.ug" target="_blank" rel="noopener noreferrer">eSchool.ug</a></span>
+    </footer>
+  </body>
+</html>
