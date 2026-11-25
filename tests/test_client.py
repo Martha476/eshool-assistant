@@ -101,6 +101,18 @@ def test_empty_results_page_returns_empty_list():
     assert parse_results(read("empty_page.html")) == []
 
 
+def test_current_public_empty_results_message_returns_empty_list():
+    html = """
+    <div class="row">
+      <div class="col-12 py-3">
+        <h4>Can't find the school you're looking for?</h4>
+        <p>We couldn't find any schools matching your criteria. Try adjusting your filters.</p>
+      </div>
+    </div>
+    """
+    assert parse_results(html) == []
+
+
 def test_unexpected_page_raises():
     with pytest.raises(EschoolError, match="Unexpected response format"):
         parse_results(read("unexpected_page.html"))

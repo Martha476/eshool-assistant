@@ -106,9 +106,14 @@ def parse_results(html: str) -> list[School]:
     soup = BeautifulSoup(html, "html.parser")
     cards = soup.select(SELECTORS["card"])
     if not cards:
-        # An empty-but-valid results page still has the container.
-        # No container at all means the page structure is not what we expect.
-        if soup.select_one(SELECTORS["results_container"]) is None:
+        # The public site currently uses this message instead of a results container
+        # when filters match no schools.
+        empty_results_message = "we couldn't find any schools matching your criteria"
+        body_text = soup.get_text(" ", strip=True).casefold()
+        if (
+            soup.select_one(SELECTORS["results_container"]) is None
+            and empty_results_message not in body_text
+        ):
             raise EschoolError("Unexpected response format: results section not found")
         return []
 
